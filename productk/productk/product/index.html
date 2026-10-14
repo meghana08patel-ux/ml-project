@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Product Demand Forecasting</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/script.js" defer></script>
+</head>
+
+<body>
+
+<header class="hero">
+
+    <div class="hero-inner">
+
+        <span class="eyebrow">
+            MACHINE LEARNING PROJECT
+        </span>
+
+        <h1>
+            Product Demand Forecasting
+        </h1>
+
+        <p>
+            AI-powered product demand forecasting for smarter inventory planning.
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div class="dashboard">
+
+
+        <!-- =====================================================
+             LEFT SIDE — FORECAST CONFIGURATION
+        ====================================================== -->
+
+        <section class="card">
+
+            <h2>
+                Configure Forecast
+            </h2>
+
+            <p class="subtitle">
+                Choose the product, store and forecast details.
+            </p>
+
+
+            <form id="forecastForm">
+
+                <div class="form-grid">
+
+
+                    <!-- FORECAST DATE -->
+
+                    <div class="field">
+
+                        <label for="forecastDate">
+                            Forecast Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="forecastDate"
+                            value="2016-12-31"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- STORE -->
+
+                    <div class="field">
+
+                        <label for="store">
+                            Store
+                        </label>
+
+                        <select
+                            id="store"
+                            required
+                        >
+
+                            <option value="">
+                                Loading stores...
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PRODUCT FAMILY -->
+
+                    <div class="field full">
+
+                        <label for="family">
+                            Product Family
+                        </label>
+
+                        <select
+                            id="family"
+                            required
+                        >
+
+                            <option value="">
+                                Loading product families...
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PROMOTION -->
+
+                    <div class="field">
+
+                        <label for="promotion">
+                            Items on Promotion
+                        </label>
+
+                        <input
+                            type="number"
+                            id="promotion"
+                            min="0"
+                            value="0"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- AVAILABLE STOCK -->
+
+                    <div class="field">
+
+                        <label for="stock">
+                            Available Stock
+                        </label>
+
+                        <input
+                            type="number"
+                            id="stock"
+                            min="0"
+                            value="1000"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- METHOD -->
+
+                    <div class="field full">
+
+                        <label for="method">
+                            Prediction Method
+                        </label>
+
+                        <input
+                            type="text"
+                            id="method"
+                            value="Ridge + Lasso"
+                            readonly
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PREDICT BUTTON -->
+
+                <button
+                    type="submit"
+                    id="predictButton"
+                >
+                    Predict Demand
+                </button>
+
+
+                <!-- STATUS -->
+
+                <p
+                    id="status"
+                    class="status"
+                    role="status"
+                >
+                    Connecting to forecasting API...
+                </p>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             RIGHT SIDE — FORECAST RESULT
+        ====================================================== -->
+
+        <section class="card results-card">
+
+
+            <!-- RESULT HEADER -->
+
+            <div class="result-heading">
+
+                <div>
+
+                    <h2>
+                        Forecast Result
+                    </h2>
+
+                    <p class="subtitle">
+                        Combined estimated daily demand
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="badge"
+                    id="resultBadge"
+                >
+                    READY
+                </span>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 EMPTY RESULT
+            ================================================== -->
+
+            <div
+                id="emptyResult"
+                class="empty-state"
+            >
+
+                <div class="chart-icon">
+                    ▥
+                </div>
+
+                <p>
+                    Your prediction will appear here.
+                </p>
+
+                <p>
+                    Enter the details and click
+                    <b>Predict Demand</b>.
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RESULT CONTENT
+            ================================================== -->
+
+            <div
+                id="resultContent"
+                hidden
+            >
+
+
+                <!-- COMBINED PREDICTION -->
+
+                <p class="result-label">
+                    Predicted Daily Demand
+                </p>
+
+
+                <div
+                    class="prediction"
+                    id="predictionValue"
+                >
+                    —
+                </div>
+
+
+                <p class="subtitle">
+                    Combined prediction using Ridge + Lasso Regression
+                </p>
+
+
+
+                <!-- =================================================
+                     INDIVIDUAL MODEL PREDICTIONS
+                ================================================== -->
+
+                <div class="model-grid">
+
+
+                    <!-- RIDGE -->
+
+                    <div class="model-box ridge">
+
+                        <span>
+                            Ridge Regression
+                        </span>
+
+                        <strong id="ridgeValue">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <!-- LASSO -->
+
+                    <div class="model-box lasso">
+
+                        <span>
+                            Lasso Regression
+                        </span>
+
+                        <strong id="lassoValue">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     INVENTORY RECOMMENDATION
+                ================================================== -->
+
+                <div class="inventory-box">
+
+                    <div class="inventory-title">
+                        Inventory Recommendation
+                    </div>
+
+
+                    <div class="inventory-grid">
+
+
+                        <!-- PREDICTED DEMAND -->
+
+                        <div class="metric">
+
+                            <span>
+                                Predicted Demand
+                            </span>
+
+                            <strong id="inventoryDemand">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <!-- AVAILABLE STOCK -->
+
+                        <div class="metric">
+
+                            <span>
+                                Available Stock
+                            </span>
+
+                            <strong id="inventoryStock">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <!-- REPLENISHMENT -->
+
+                        <div class="metric">
+
+                            <span>
+                                Recommended Replenishment
+                            </span>
+
+                            <strong id="replenishmentValue">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <!-- STOCK STATUS -->
+
+                        <div class="metric">
+
+                            <span>
+                                Stock Status
+                            </span>
+
+                            <strong id="stockStatus">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     FORECAST DETAILS
+                ================================================== -->
+
+                <div class="details-grid">
+
+
+                    <!-- DATE -->
+
+                    <div class="metric">
+
+                        <span>
+                            Forecast Date
+                        </span>
+
+                        <strong id="resultDate">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <!-- STORE -->
+
+                    <div class="metric">
+
+                        <span>
+                            Store
+                        </span>
+
+                        <strong id="resultStore">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <!-- PRODUCT FAMILY -->
+
+                    <div class="metric">
+
+                        <span>
+                            Product Family
+                        </span>
+
+                        <strong id="resultFamily">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <!-- PROMOTION -->
+
+                    <div class="metric">
+
+                        <span>
+                            Items on Promotion
+                        </span>
+
+                        <strong id="resultPromotion">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- EXPLANATION -->
+
+                <p
+                    id="resultDetails"
+                    class="note"
+                ></p>
+
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <p class="footer">
+        Product Demand Forecasting · Ridge &amp; Lasso Regression
+    </p>
+
+</main>
+
+</body>
+
+</html>

@@ -1,0 +1,18 @@
+[
+  "family",
+  "city",
+  "state",
+  "type",
+  "store_nbr",
+  "onpromotion",
+  "cluster",
+  "year",
+  "month",
+  "day",
+  "day_of_week",
+  "week_of_year",
+  "is_weekend",
+  "lag_1",
+  "lag_7",
+  "rolling_mean_7"
+]
